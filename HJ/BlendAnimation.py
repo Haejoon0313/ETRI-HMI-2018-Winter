@@ -102,7 +102,7 @@ def renderCurrentEnv(model, film_transparent):
 #
 # Batch render animation frames of an object for multiple env maps
 #
-def renderAnimationEnv(model, film_transparent, flag):
+def renderAnimationEnv(model, film_transparent, flag, flag2):
     """Render for 19 env maps"""
     print("start object: " + model.name)
     print(datetime.datetime.now())
@@ -116,7 +116,7 @@ def renderAnimationEnv(model, film_transparent, flag):
         env_name=os.path.splitext(i.name)[0]
         print("start envmap: " + env_name)
         print(datetime.datetime.now())
-        render.filepath = os.path.join(render_dir,model.name, flag, envtex.image.name, str(scene.cycles.samples), "RGB_####.png")
+        render.filepath = os.path.join(render_dir,model.name, flag, envtex.image.name, flag2+"_AirPlane_####.png")
         bpy.ops.render.render (animation = True)
         print("end envmap: " + env_name)
         print(datetime.datetime.now())
@@ -156,15 +156,15 @@ def renderXYZ(model):
 # Render Options
 #
 scene = bpy.data.scenes["Scene"]
-scene.cycles.device = 'GPU' # 'CPU' or 'GPU'
-scene.cycles.samples = 1024 # 20 or 100
+scene.cycles.device = 'CPU' # 'CPU' or 'GPU'
+scene.cycles.samples = 20 # 20 or 100
 scene.render.threads_mode = 'AUTO' # 'AUTO' or 'FIXED'
 #scene.render.threads = 1
 scene.cycles.film_transparent = False
 #scene.compression = 90
 scene.render.resolution_x = 640
 scene.render.resolution_y = 480
-scene.render.resolution_percentage = 200
+scene.render.resolution_percentage = 50
 scene.render.tile_x = 32
 scene.render.tile_y = 32
 scene.frame_start = 131
@@ -174,16 +174,18 @@ scene.frame_step = 1
 #
 # Main function
 #
-'''
-renderAnimationEnv(models[1], False, "200")
 
-scene.render.resolution_percentage = 100
-renderAnimationEnv(models[1], False, "100")
+i = 16
 
-scene.render.resolution_percentage = 50
-renderAnimationEnv(models[1], False, "50")
+while(i<1500):
+    scene.cycles.device = 'CPU' # 'CPU' or 'GPU'
+    renderAnimationEnv(models[1], False, str(i)+"size", "CPU")
+    scene.cycles.device = 'GPU' # 'CPU' or 'GPU'
+    renderAnimationEnv(models[1], False, str(i)+"size", "GPU")
+    
+    i = i*2
 
-'''
+
 '''
 for m in models:
     renderAnimationEnv(m, False)
