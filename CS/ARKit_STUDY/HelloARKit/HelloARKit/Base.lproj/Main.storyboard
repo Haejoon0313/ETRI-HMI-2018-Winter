@@ -18,12 +18,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aqq-pP-uvU">
+                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aqq-pP-uvU">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </arscnView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="aqq-pP-uvU" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="40I-Hu-xoN"/>
+                            <constraint firstItem="aqq-pP-uvU" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="9v4-9B-Lu2"/>
+                            <constraint firstItem="aqq-pP-uvU" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="FtM-mk-aL6"/>
+                            <constraint firstItem="aqq-pP-uvU" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="MER-yF-seG"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
