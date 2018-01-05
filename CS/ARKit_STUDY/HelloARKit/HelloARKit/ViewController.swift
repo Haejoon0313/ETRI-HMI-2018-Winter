@@ -15,20 +15,28 @@ class ViewController: UIViewController {
     let configuration = ARWorldTrackingConfiguration()
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
+        
+        self.sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin, ARSCNDebugOptions.showFeaturePoints]
         self.sceneView.session.run(configuration)
-        addText()
+        
+    }
+    
+    
+    @IBAction func add(_ sender: Any) {
+        self.addText()
     }
     
     func addText() {
     
-        let text = SCNText(string: "ETRI HRI", extrusionDepth: 0.5)
         /*
         let material = SCNMaterial()
         material.diffuse.contents = UIColor.green
         text.materials = [material]
         */
         let node = SCNNode()
+        let text = SCNText(string: "ETRI HRI", extrusionDepth: 0.5)
         node.geometry = text
         node.geometry?.firstMaterial?.diffuse.contents = UIColor.green
         node.position = SCNVector3(0, 0, -0.5)
