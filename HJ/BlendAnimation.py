@@ -102,7 +102,7 @@ def renderCurrentEnv(model, film_transparent):
 #
 # Batch render animation frames of an object for multiple env maps
 #
-def renderAnimationEnv(model, film_transparent, flag, flag2):
+def renderAnimationEnv(model, film_transparent, try_num, flag, flag2):
     """Render for 19 env maps"""
     print("start object: " + model.name)
     print(datetime.datetime.now())
@@ -116,7 +116,7 @@ def renderAnimationEnv(model, film_transparent, flag, flag2):
         env_name=os.path.splitext(i.name)[0]
         print("start envmap: " + env_name)
         print(datetime.datetime.now())
-        render.filepath = os.path.join(render_dir,model.name, flag, envtex.image.name, flag2+"_AirPlane_####.png")
+        render.filepath = os.path.join(render_dir,model.name, try_num, flag, envtex.image.name, flag2+"_AirPlane_####.png")
         bpy.ops.render.render (animation = True)
         print("end envmap: " + env_name)
         print(datetime.datetime.now())
@@ -164,7 +164,7 @@ scene.cycles.film_transparent = False
 #scene.compression = 90
 scene.render.resolution_x = 640
 scene.render.resolution_y = 480
-scene.render.resolution_percentage = 50
+scene.render.resolution_percentage = 200
 scene.render.tile_x = 32
 scene.render.tile_y = 32
 scene.frame_start = 131
@@ -174,20 +174,15 @@ scene.frame_step = 1
 #
 # Main function
 #
-
 i = 16
 
-while(i<1500):
-    scene.cycles.device = 'CPU' # 'CPU' or 'GPU'
-    renderAnimationEnv(models[1], False, str(i)+"size", "CPU")
-    scene.cycles.device = 'GPU' # 'CPU' or 'GPU'
-    renderAnimationEnv(models[1], False, str(i)+"size", "GPU")
-    
-    i = i*2
+for j in range(10):
+    while(i<1500):
+        scene.cycles.device = 'CPU' # 'CPU' or 'GPU'
+        renderAnimationEnv(models[1], False, "try_num_"+str(j), str(i)+"size", "CPU")
+        scene.cycles.device = 'GPU' # 'CPU' or 'GPU'
+        renderAnimationEnv(models[1], False, "try_num_"+str(j), str(i)+"size", "GPU")
+        
+        i = i*2
 
-
-'''
-for m in models:
-    renderAnimationEnv(m, False)
-'''
 

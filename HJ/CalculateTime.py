@@ -84,11 +84,11 @@ def unpack_time(time):
 
 # main function
 
-result_parse = time_parse("Render/time_data.txt")
+result_parse = time_parse("Render/Airplane/time_data.txt")
 
 start_time = result_parse[0]
 end_time = result_parse[1]
 
-success = time_subtract_loop(start_time, end_time, "Render/time_calculate.txt")
+success = time_subtract_loop(start_time, end_time, "Render/Airplane/time_calculate.txt")
 
 print(success)
