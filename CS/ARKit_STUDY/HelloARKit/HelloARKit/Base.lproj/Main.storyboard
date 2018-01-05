@@ -22,7 +22,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </arscnView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uxm-h8-M8J">
-                                <rect key="frame" x="32" y="582" width="62" height="53"/>
+                                <rect key="frame" x="32" y="575" width="70" height="61"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <state key="normal" title="Button"/>
@@ -30,13 +30,23 @@
                                     <action selector="add:" destination="BYZ-38-t0r" eventType="touchUpInside" id="p2b-pZ-esR"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZRI-Mf-pyu">
+                                <rect key="frame" x="278" y="571" width="70" height="64"/>
+                                <color key="backgroundColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Reset"/>
+                                <connections>
+                                    <action selector="reset:" destination="BYZ-38-t0r" eventType="touchUpInside" id="5Dm-8x-NeF"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="aqq-pP-uvU" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="40I-Hu-xoN"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="ZRI-Mf-pyu" secondAttribute="bottom" constant="32" id="8aU-Lv-1wf"/>
                             <constraint firstItem="aqq-pP-uvU" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="9v4-9B-Lu2"/>
                             <constraint firstItem="aqq-pP-uvU" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="FtM-mk-aL6"/>
                             <constraint firstItem="aqq-pP-uvU" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="MER-yF-seG"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ZRI-Mf-pyu" secondAttribute="trailing" constant="27" id="xqZ-Z1-miV"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>

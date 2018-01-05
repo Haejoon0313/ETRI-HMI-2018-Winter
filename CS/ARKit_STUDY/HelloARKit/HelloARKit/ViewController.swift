@@ -28,6 +28,10 @@ class ViewController: UIViewController {
         self.addText()
     }
     
+    @IBAction func reset(_ sender: Any) {
+        self.restartSession()
+    }
+    
     func addText() {
     
         /*
@@ -43,6 +47,15 @@ class ViewController: UIViewController {
         node.scale = SCNVector3(0.01, 0.007, 0.03)
         sceneView.scene.rootNode.addChildNode(node)
         //sceneView.automaticallyUpdatesLighting = true
+        
+    }
+    
+    func restartSession(){
+        self.sceneView.session.pause()
+        self.sceneView.scene.rootNode.enumerateChildNodes { (node, _) in
+            node.removeFromParentNode()
+        }
+        self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
         
     }
 
