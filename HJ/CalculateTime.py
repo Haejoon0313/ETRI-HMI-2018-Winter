@@ -35,7 +35,7 @@ def time_subtract_loop(start, end, result_path):
         play_time = time_subtract(start_time, end_time)
         
         result.write(pack_time(play_time))
-        result.write("\n\n")
+        result.write("\n")
     
     result.close()
     
