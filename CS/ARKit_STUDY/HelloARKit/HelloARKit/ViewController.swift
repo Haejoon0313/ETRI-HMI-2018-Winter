@@ -61,35 +61,24 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     // This function get called everytime to render a scene, need ARSCNViewDelegate (never ending roop)
     func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
-        //Detecting position of CameraView
+    
         guard let pointOfView = sceneView.pointOfView else {return} // the node from which the scene's contents viewed for rendering
         
         let transform = pointOfView.transform
         
-        let orientation = SCNVector3(-transform.m31, -transform.m32, -transform.m33) //column:3
-        let location = SCNVector3(transform.m41, transform.m42, transform.m43)//column:4
-        let curreontCameraView = orientation + location
+        //let orientation = SCNVector3(-transform.m31, -transform.m32, -transform.m33) //column:3
+        //let location = SCNVector3(transform.m41, transform.m42, transform.m43)//column:4
+        //let curreontCameraView = orientation + location
         
         DispatchQueue.main.async {
             if self.add.isHighlighted {
-                let sphereNode = SCNNode(geometry: SCNSphere(radius: 0.01))
-                sphereNode.position = curreontCameraView
-                
-                self.sceneView.scene.rootNode.addChildNode(sphereNode)
-                sphereNode.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
-                
-                
-                
-                //sphereNode.opacity = 0.5
-                //pyramidNode.eulerAngles = SCNVector3( Float(90.degreesToRadians),0,0)
-                /*
                  let pyramidNode = SCNNode(geometry: SCNPyramid(width: 0.04, height: 0.06, length: 0.02))
                  pyramidNode.transform = transform
-                 pyramidNode.opacity = 0.5
+                 pyramidNode.opacity = 0.7
                  //pyramidNode.eulerAngles = SCNVector3( Float(90.degreesToRadians),0,0)
                  self.sceneView.scene.rootNode.addChildNode(pyramidNode)
                  pyramidNode.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
-                 */
+                
             }
         }
         
