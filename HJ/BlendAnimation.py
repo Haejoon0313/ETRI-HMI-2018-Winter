@@ -174,9 +174,12 @@ scene.frame_step = 1
 #
 # Main function
 #
-i = 16
+
 
 for j in range(10):
+    
+    i = 16
+    
     while(i<1500):
         scene.cycles.device = 'CPU' # 'CPU' or 'GPU'
         renderAnimationEnv(models[1], False, "try_num_"+str(j), str(i)+"size", "CPU")
