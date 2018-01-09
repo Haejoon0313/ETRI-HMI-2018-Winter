@@ -5,51 +5,49 @@
 //  Created by Dev on 2018. 1. 3..
 //  Copyright © 2018년 Dev. All rights reserved.
 //
+//TODO:
+//1) plane Detection 생성 (checked)
+//2) device의 orientation 따라하기
 
 import UIKit
 import ARKit
+
 
 class ViewController: UIViewController, ARSCNViewDelegate {
     
     @IBOutlet weak var sceneView: ARSCNView!
     let configuration = ARWorldTrackingConfiguration()
-    @IBOutlet weak var add: UIButton!
+    var cameraTransform:SCNNode!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin, ARSCNDebugOptions.showFeaturePoints]
         self.sceneView.showsStatistics = true
-        self.configuration.planeDetection = .horizontal
+        self.configuration.planeDetection = .horizontal //to detect horizontal surfaces
         self.sceneView.session.run(configuration)
         self.sceneView.delegate = self
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
         
+        guard let pointOfView = sceneView.pointOfView else {return}
+        self.cameraTransform = pointOfView
     }
-    
-    /*
-     @IBAction func add(_ sender: Any) {
-     self.addText()
-     }
-     */
-    
     
     @IBAction func reset(_ sender: Any) {
         self.restartSession()
     }
     
-    /*
-     func addText() {
-     let textNode = SCNNode(geometry: SCNText(string: "ETRI", extrusionDepth: 0.5))
-     textNode.geometry?.firstMaterial?.diffuse.contents = UIColor.green
-     textNode.position = SCNVector3(0, 0, -0.3)
-     textNode.scale = SCNVector3(0.01, 0.007, 0.03)
-     sceneView.scene.rootNode.addChildNode(textNode)
-     sceneView.automaticallyUpdatesLighting = true //omni light
-     }
-     */
     
+   
+    @IBAction func add(_ sender: Any) {
+        let pyramidNode = SCNNode(geometry: SCNPyramid(width: 0.04, height: 0.06, length: 0.02))
+        pyramidNode.transform = self.cameraTransform.transform
+        pyramidNode.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
+        pyramidNode.opacity = 0.75
+        let action = SCNAction.rotateBy(x:0, y:CGFloat(360.degreesToRadians),z:0, duration: 8)
+        pyramidNode.runAction(action)
+        self.sceneView.scene.rootNode.addChildNode(pyramidNode)
+    }
+    
+    //restart the session : reset tracking and existingAnchors
     func restartSession(){
         self.sceneView.session.pause()
         self.sceneView.scene.rootNode.enumerateChildNodes { (node, _) in
@@ -59,37 +57,69 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
     }
     
+    
+    func createPlane(planeAnchor: ARPlaneAnchor ) -> SCNNode {
+        
+        //let planeNode = SCNNode(geometry:SCNBox(width: CGFloat(planeAnchor.extent.x), height: 0.1 , length: CGFloat(planeAnchor.extent.z), chamferRadius: 0))
+        //planeNode.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
+        //planeNode.simdPosition = float3(planeAnchor.center.x,0,planeAnchor.center.z)
+        //planeNode.opacity = 0.25
+        
+        let planeNode = SCNNode(geometry: SCNPlane(width:CGFloat(planeAnchor.extent.x), height: CGFloat(planeAnchor.extent.z)))
+        planeNode.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
+        planeNode.geometry?.firstMaterial?.isDoubleSided = true
+        planeNode.simdPosition = float3(planeAnchor.center.x,0,planeAnchor.center.z)
+        planeNode.eulerAngles = SCNVector3(90.degreesToRadians,0,0)
+        planeNode.opacity = 0.25
+        return planeNode
+    }
+    
     // This function get called everytime to render a scene, need ARSCNViewDelegate (never ending roop)
     func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
-    
-        guard let pointOfView = sceneView.pointOfView else {return} // the node from which the scene's contents viewed for rendering
         
-        let transform = pointOfView.transform
-        
-        //let orientation = SCNVector3(-transform.m31, -transform.m32, -transform.m33) //column:3
-        //let location = SCNVector3(transform.m41, transform.m42, transform.m43)//column:4
-        //let curreontCameraView = orientation + location
-        
-        DispatchQueue.main.async {
-            if self.add.isHighlighted {
-                 let pyramidNode = SCNNode(geometry: SCNPyramid(width: 0.04, height: 0.06, length: 0.02))
-                 pyramidNode.transform = transform
-                 pyramidNode.opacity = 0.7
-                 //pyramidNode.eulerAngles = SCNVector3( Float(90.degreesToRadians),0,0)
-                 self.sceneView.scene.rootNode.addChildNode(pyramidNode)
-                 pyramidNode.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
-                
-            }
-        }
+        /*
+         DispatchQueue.main.async {
+         if self.add.isHighlighted {
+         
+         }
+         
+         }
+         */
         
     }
     
+    //ARAnchor encodes an orientation position and size of something in the Real World
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        // print("New surface")
+        guard let planeAnchor = anchor as? ARPlaneAnchor else {return}
+        let planeNode = createPlane(planeAnchor: planeAnchor)
+        node.addChildNode(planeNode)
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        // print("updating floor's anchor")
+        guard let planeAnchor = anchor as? ARPlaneAnchor else {return}
+        node.enumerateChildNodes { (childNode, _) in
+            childNode.removeFromParentNode()
+        }
+        let planeNode = createPlane(planeAnchor: planeAnchor)
+        node.addChildNode(planeNode)
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, didRemove node: SCNNode, for anchor: ARAnchor) {
+        //print("remove previous surface")
+        guard let _ = anchor as? ARPlaneAnchor else {return}
+        node.enumerateChildNodes { (childNode, _) in
+            childNode.removeFromParentNode()
+        }
+    }
+    
+    
 }
 
+
 extension Int {
-    
     var degreesToRadians: Double { return Double(self) * .pi/180}
-    
 }
 
 
