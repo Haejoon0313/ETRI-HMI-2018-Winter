@@ -1,8 +1,12 @@
 import csv
 import ctypes
+import os
 
 # open time data txt -> parsing
 def time_parse(data_path):
+    
+    if(os.path.exists(data_path) == False):
+        return False
     
     data = open(data_path,'r')
     D_lines = data.readlines()
@@ -193,51 +197,70 @@ STD_ERROR_HANDLE   = -12
 
 std_out_handle = ctypes.windll.kernel32.GetStdHandle(STD_OUTPUT_HANDLE)
 
-
-# black 0/blue 1/green 2/red 4/yellow 14/white 7
+# black 0/blue 1/green 2/red 12/yellow 14/white 7
 def set_color(color, handle=std_out_handle):
     bool = ctypes.windll.kernel32.SetConsoleTextAttribute(handle, color)
     return bool
 
 
-# main function (cal)
-print("\n------------------------------------Post processing START------------------------------------\n\n")
+# main function
+def main():
+    # calculation function
+    
+    result_parse = time_parse("Render/Airplane/time_data.txt")
+    
+    if(result_parse == False):
+        set_color(14)
+        print("No Time Data File!\n")
+        set_color(7)
+        
+        return False
+    
+    start_time = result_parse[0]
+    end_time = result_parse[1]
+    
+    success1 = time_subtract_loop(start_time, end_time, "Render/Airplane/time_calculate.txt")    
 
-result_parse = time_parse("Render/Airplane/time_data.txt")
-
-start_time = result_parse[0]
-end_time = result_parse[1]
-
-success1 = time_subtract_loop(start_time, end_time, "Render/Airplane/time_calculate.txt")
-
-if(success1):
+    if(success1 == False):
+        set_color(12)
+        print("Calculation Error!\n")
+        set_color(7)
+    
+        return False
+    
     print("Time calculation is Done.\n")
-else:
-    set_color(4)
-    print("Calculation Error!\n")
-    set_color(7)
-
-
-# main function (csv)
-options_list = options_input()
-
-option_table = data_from_options(options_list)
-time_table = data_from_time()
-
-result_table = combine_data(option_table, time_table)
-
-if(result_table == False):
-    set_color(14)
-    print("\nDismatch between options and time!\n")
-    set_color(7)
-else:
+    
+    # csv function
+    options_list = options_input()
+    
+    option_table = data_from_options(options_list)
+    time_table = data_from_time()
+    
+    result_table = combine_data(option_table, time_table)
+    
+    if(result_table == False):
+        set_color(14)
+        print("\nDismatch between options and time!\n")
+        set_color(7)
+        
+        return False
+    
     success2 = createCSV(result_table)
-    if(success2):
-        print("\nCreating CSV file is Done.\n")
-    else:
-        set_color(4)
+    if(success2 == False):
+        set_color(12)
         print("\nCreate CSV file Error!\n")
         set_color(7)
+        
+        return False
+    
+    print("\nCreating CSV file is Done.\n")
+    
+    return True
 
+
+# process
+print("\n------------------------------------Post processing START------------------------------------\n\n")
+main()
 print("\n------------------------------------Post processing END------------------------------------\n\n")
 raw_input("Press Enter to Exit")
+

@@ -15,6 +15,7 @@ C.space_data.font_size = 20
 
 work_dir = os.path.dirname(bpy.data.filepath)
 render_dir = os.path.join(work_dir, "Render")
+log_dir = os.path.join(render_dir, "Airplane")
 
 w = D.worlds[0]
 world = w
@@ -156,29 +157,33 @@ def renderXYZ(model):
 # Render Options
 #
 scene = bpy.data.scenes["Scene"]
-scene.cycles.device = 'CPU' # 'CPU' or 'GPU'
-scene.cycles.samples = 20 # 20 or 100
 scene.render.threads_mode = 'AUTO' # 'AUTO' or 'FIXED'
 #scene.render.threads = 1
 scene.cycles.film_transparent = True
 #scene.compression = 90
 scene.render.resolution_x = 640
 scene.render.resolution_y = 480
-scene.render.resolution_percentage = 10
-scene.render.tile_x = 32
-scene.render.tile_y = 32
 scene.frame_start = 131
 scene.frame_end = 131
-scene.frame_step = 1
-scene.cycles.max_bounces = 32 # glossy + diffuse
-scene.cycles.min_bounces = 3
+
+scene.cycles.device = 'CPU' # 'CPU' or 'GPU'
+scene.render.resolution_percentage = 20
+scene.cycles.samples = 20 # 20 or 100
+scene.render.tile_x = 32
+scene.render.tile_y = 32
 scene.cycles.diffuse_bounces = 2
 scene.cycles.glossy_bounces = 2
+scene.frame_step = 1
+
+scene.cycles.max_bounces = 32 # glossy + diffuse
+scene.cycles.min_bounces = 3
 
 
 #
 # Main function
 #
+
+log_file = open(log_dir+"/time_data.txt", 'w')
 
 s_i = 10
 bounces = [2, 4, 8, 16]
@@ -189,12 +194,20 @@ while(s_i < 1500):
     for d_i in bounces:
         for g_i in bounces:
             
+            log_file.write("start object\n")
+            log_file.write(str(datetime.datetime.now()))
+            log_file.write("\n")
+            
             scene.cycles.diffuse_bounces = d_i
             scene.cycles.glossy_bounces = g_i
             scene.cycles.max_bounces = d_i + g_i # glossy + diffuse
             
             renderAnimationEnv(models[1], str(s_i), str(d_i), str(g_i), True)
             
+            log_file.write(str(datetime.datetime.now()))
+            log_file.write("\n")
+            log_file.write("end object\n")
+            
     s_i = s_i * 2
 
-
+log_file.close()
