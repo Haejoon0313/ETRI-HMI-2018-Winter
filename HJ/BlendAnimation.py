@@ -185,6 +185,8 @@ scene.cycles.min_bounces = 3
 
 log_file = open(log_dir+"/time_data.txt", 'w')
 
+log_file.write("\n\nsample & bounces start!\n\n")
+
 s_i = 10
 bounces = [2, 4, 8, 16]
 
@@ -209,5 +211,7 @@ while(s_i < 1500):
             log_file.write("end object\n")
             
     s_i = s_i * 2
+
+log_file.write("\n\nsample & bounces end!\n\n")
 
 log_file.close()
