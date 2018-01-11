@@ -33,8 +33,9 @@ class ViewController: UIViewController {
         self.configuration.planeDetection = .horizontal //to detect horizontal surfaces
         self.sceneView.session.run(configuration)
         self.sceneView.delegate = self
+        self.registerGestureRecognizer()
     }
-
+    
     @IBAction func reset(_ sender: Any) {
         self.restartSession()
     }
@@ -49,7 +50,7 @@ class ViewController: UIViewController {
         self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
         
     }
-
+    
     //Add pyramid
     @IBAction func add(_ sender: Any) {
         
@@ -63,7 +64,7 @@ class ViewController: UIViewController {
     
     func createPlane(planeAnchor: ARPlaneAnchor ) -> SCNNode {
         
-       let planeNode = SCNNode(geometry: SCNPlane(width:CGFloat(planeAnchor.extent.x), height: CGFloat(planeAnchor.extent.z)))
+        let planeNode = SCNNode(geometry: SCNPlane(width:CGFloat(planeAnchor.extent.x), height: CGFloat(planeAnchor.extent.z)))
         planeNode.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
         planeNode.geometry?.firstMaterial?.isDoubleSided = true
         planeNode.simdPosition = float3(planeAnchor.center.x,0,planeAnchor.center.z)
@@ -72,7 +73,39 @@ class ViewController: UIViewController {
         
         return planeNode
     }
-   
+    
+    
+    //화면 Tap에 대한 Recognize
+    func registerGestureRecognizer(){
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapped))
+        self.sceneView.addGestureRecognizer(tapGestureRecognizer)
+        
+    }
+    
+    @objc func tapped(sender: UITapGestureRecognizer){
+        //print("The scene is being tapped")
+        let sceneView = sender.view as! ARSCNView
+        let tapLocation = sender.location(in: sceneView)
+        let hitTest = sceneView.hitTest( tapLocation, types: .existingPlaneUsingExtent)
+        if !hitTest.isEmpty {
+            //print("touched a horizontal surface")
+            self.addItem(hitTestResult: hitTest.first!)
+        }else{
+            // print("no match")
+        }
+    }
+    
+    //call this function whenever you tap on a horizontal surface
+    func addItem(hitTestResult: ARHitTestResult){
+        let thirdColumn = hitTestResult.worldTransform.columns.3 //position
+        //print(thirdColumn.x, thirdColumn.y, thirdColumn.z)
+        let boxNode = SCNNode(geometry: SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0))
+        boxNode.geometry?.firstMaterial?.diffuse.contents = UIColor.red
+        boxNode.position = SCNVector3(thirdColumn.x, thirdColumn.y, thirdColumn.z)
+        self.sceneView.scene.rootNode.addChildNode(boxNode)
+        
+    }
 }
 
 extension Int {
