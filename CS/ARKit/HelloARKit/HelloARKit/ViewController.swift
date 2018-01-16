@@ -79,6 +79,13 @@ class ViewController: UIViewController {
     func registerGestureRecognizer(){
         
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapped))
+        
+        //let panGestureRecognizer = UIPanGestureRecognizer(target:self, action: #selector(panned))
+        //let pinchGestureRecognizer = UIPinchGestureRecognizer(target:self, action: #selector(pinched))
+        //let swipeGestureRecognizer = UISwipeGestureRecognizer(target:self, action: #selector(swiped))
+        //let rotateGestureRecognizer = UIRotationGestureRecognizer(target:self, action: #selector(rotated))
+        //let longGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressed))
+ 
         self.sceneView.addGestureRecognizer(tapGestureRecognizer)
         
     }
@@ -95,6 +102,12 @@ class ViewController: UIViewController {
             // print("no match")
         }
     }
+    
+    //@objc func panned(sender: UIPanGestureRecognizer){}
+    //@objc func swiped(sender: UISwipeGestureRecognizer){}
+    //@objc func pinched(sender: UIPinchGestureRecognizer){}
+    //@objc func rotated(sender: UIRotationGestureRecognizer){}
+    //@objc func longPressed(sender: UILongPressGestureRecognizer){}
     
     //call this function whenever you tap on a horizontal surface
     func addItem(hitTestResult: ARHitTestResult){
