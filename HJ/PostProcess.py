@@ -3,14 +3,15 @@ import ctypes
 import os
 import sys
 import math
+import mpld3
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image, ImageChops
 
 
 # global variable
-WORK_PATH = "Render/Airplane/"
-PLANE_PIXELS = 39105.0
+WORK_PATH = "Render/"
+SCENE_PIXELS = [13730.0, 17325.0, 23209.0, 17515.0, 18734.0]
 OPTIONS = 3
 ENV_FOLDER = ["balcony_2k.hdr", "bathroom_2k.hdr", "bergen_2k.hdr", "blinds_2k.hdr", "brick_lounge_2k.hdr", "cabin_2k.hdr", 
               "courtyard_2k.hdr", "courtyard_night_2k.hdr", "delta_2k.hdr", "fish_eagle_hill_2k.hdr", "garage_2k.hdr", "golden_gate_2k.hdr", 
@@ -118,9 +119,9 @@ def unpack_time(time):
 
 
 # save diff image as png then return diff / pixels
-def image_diff(x, ref):
+def image_diff(x, ref, scene_num):
     
-    image_x = Image.open(x + "AirPlane_0131.png")
+    image_x = Image.open(x + "Animation_0501.png")
     image_ref = Image.open(ref)
     
     result0 = 0.0
@@ -141,13 +142,13 @@ def image_diff(x, ref):
         for j in range(640):
             if(diff_rgb[i][j].all() != 0):
               
-                result0 += math.pow(diff_rgb[i][j][0], 2)
-                result1 += math.pow(diff_rgb[i][j][1], 2)
-                result2 += math.pow(diff_rgb[i][j][2], 2)
+                    result0 += math.pow(diff_rgb[i][j][0] / 255.0, 2)
+                    result1 += math.pow(diff_rgb[i][j][1] / 255.0, 2)
+                    result2 += math.pow(diff_rgb[i][j][2] / 255.0, 2)
     
-    result0 = math.sqrt(result0 / (PLANE_PIXELS * 255))
-    result1 = math.sqrt(result1 / (PLANE_PIXELS * 255))
-    result2 = math.sqrt(result2 / (PLANE_PIXELS * 255))
+    result0 = math.sqrt(result0 / (SCENE_PIXELS[scene_num]))
+    result1 = math.sqrt(result1 / (SCENE_PIXELS[scene_num]))
+    result2 = math.sqrt(result2 / (SCENE_PIXELS[scene_num]))
     
     result = (result0 + result1 + result2) / 3.0
     
@@ -160,7 +161,7 @@ def createCSV(data):
     f = open(WORK_PATH + "data.csv",'w')
     csvWriter = csv.writer(f)
     
-    csvWriter.writerow(["Device", "Resolution", "Samples", "Tile Size", "Diffuse Bounces", "Glossy Bounces", "Frame", "Time", "ImageDiff"])
+    csvWriter.writerow(["Scene", "Device", "Resolution", "Samples", "Tile Size", "Diffuse Bounces", "Glossy Bounces", "Frame", "Time", "ImageDiff"])
     
     for d in data:
         csvWriter.writerow(d)
@@ -182,9 +183,10 @@ def data_from_options(options):
                     for i4 in options[4]:
                         for i5 in options[5]:
                             for i6 in options[6]:
+                                for i7 in options[7]:
                                 
-                                temp = [i0, i1, i2, i3, i4, i5, i6]
-                                result.append(temp)
+                                    temp = [i0, i1, i2, i3, i4, i5, i6, i7]
+                                    result.append(temp)
     
     return result
 
@@ -216,32 +218,34 @@ def data_from_diff(options_list):
     result = []
     diff_len = 1.0
     
-    for o in options_list:
+    for o in options_list: # pick options which have more than one
         if(len(o) > 1):
             diff_option_list.append(o)
     
-    for i in range(3):
-        diff_len = diff_len * len(diff_option_list[i])
-    
-    diff_len = diff_len * 19
+    for d_i in diff_option_list:
+        diff_len = diff_len * len(d_i)
+        
+    diff_len = diff_len * 3
     flag = 0.0
     
     for i0 in diff_option_list[0]:
         for i1 in diff_option_list[1]:
             for i2 in diff_option_list[2]:
+                for i3 in diff_option_list[3]:
                 
-                result_temp = 0.0
-                
-                for i3 in ENV_FOLDER:
+                    result_temp = 0.0
                     
-                    print("\rImage Difference Processing...   " + str(int(flag)) + "/" + str(int(diff_len)) + "  (" + str(round(flag*100.0/diff_len, 2)) + " %)"),
+                    for i4 in [ENV_FOLDER[0], ENV_FOLDER[7], ENV_FOLDER[18]]:
+                        
+                        print("\rImage Difference Processing...   " + str(int(flag)) + "/" + str(int(diff_len)) + "  (" + str(round(flag*100.0/diff_len, 2)) + " %)"),
+                        
+                        temp = image_diff(WORK_PATH + "scene" + i0 + "/sample" + i1 + "/D" + i2 + "&G" + i3 + "/" + i4 + "/", "Data/Reference/180116/" + "scene" + i0 + "/sample1280/D16&G16/" + i4 + "/Animation_0501.png", int(i0))
+                        result_temp = result_temp + temp
+                        
+                        flag += 1.0
                     
-                    temp = image_diff(WORK_PATH + "sample" + i0 + "/D" + i1 + "&G" + i2 + "/" + i3 + "/", "Data/Reference/100/" + i3 + "/AirPlane_0131.png")
-                    result_temp += temp
-                    
-                    flag += 1.0
-                
-                result.append(str(temp))
+                    result_temp = result_temp / len([ENV_FOLDER[0], ENV_FOLDER[7], ENV_FOLDER[18]])
+                    result.append(str(result_temp))
     
     return result
 
@@ -274,6 +278,12 @@ def options_input():
     
     result = []
     
+    temp0_list = raw_input("Scene?   ").split(" ") # CPU or GPU
+    temp0 = []
+    for i in range(int(temp0_list[0])):
+        temp0.append(str(i))
+    result.append(temp0)
+    
     temp1 = raw_input("Device?   ").split(" ") # CPU or GPU
     result.append(temp1)
     
@@ -305,9 +315,60 @@ def set_color(color, handle=std_out_handle):
 
 
 # read csv file then draw graph for each
-def draw_graph(data, save_path):
+def draw_graph(option_data, time_data, diff_data, result_path):
+    
+    X = []
+    Y = []
+    Z = []
+            
+    for a in time_data:
+        
+        a = a.strip(" (s)")
+        temp1 = float(a.split(" : ")[0])
+        temp2 = float(a.split(" : ")[1])
+        temp = temp1 * 60 + temp2
+        X.append(temp)
+        
+    for b in diff_data:
+        
+        temp = float(b)
+        Y.append(temp)
+    
+    fig, ax = plt.subplots(subplot_kw=dict(facecolor='#EEEEEE'))
+    
+    scatter = ax.scatter(X, Y, color = 'k', s=5)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Color Difference (RMS)")    
+    ax.set_title("Scatter Plot for Time-Color Difference", size=20)
+    
+    for c in option_data:
+        
+        temp = labeling(c)
+        Z.append(temp)
+    
+    tooltip = mpld3.plugins.PointLabelTooltip(scatter, labels=Z)
+    mpld3.plugins.connect(fig, tooltip)
+    
+    mpld3.save_html(fig, result_path)
     
     return True
+
+
+# labeling for tooltips
+def labeling(ops):
+    
+    result = []
+    
+    result.append("# " + str(ops[0]))
+    result.append(str(ops[1]))
+    result.append("R " + str(ops[2]))
+    result.append("S " + str(ops[3]))
+    result.append("T " + str(ops[4]))
+    result.append("D " + str(ops[5]))
+    result.append("G " + str(ops[6]))
+    result.append("F " + str(ops[7]))
+    
+    return result
  
 
 # main function
@@ -328,9 +389,10 @@ def main():
     start_time = result_parse[0]
     end_time = result_parse[1]
     
-    success1 = time_subtract_loop(start_time, end_time, WORK_PATH + "time_calculate.txt")    
+    try:
+        success1 = time_subtract_loop(start_time, end_time, WORK_PATH + "time_calculate.txt")    
 
-    if(success1 == False):
+    except:
         set_color(12)
         print("Calculation Error!\n")
         set_color(7)
@@ -345,9 +407,11 @@ def main():
     
     option_table = data_from_options(options_list)
     time_table = data_from_time()
-    diff_table = data_from_diff(options_list)
     
-    if(diff_table == False):
+    try:
+        diff_table = data_from_diff(options_list)
+    
+    except:
         
         set_color(12)
         print("Image difference Error!\n")
@@ -377,9 +441,10 @@ def main():
         
         return False    
     
-    success2 = createCSV(result_table)
+    try:
+        success2 = createCSV(result_table)
     
-    if(success2 == False):
+    except:
         set_color(12)
         print("\nCreate CSV file Error!\n")
         set_color(7)
@@ -390,9 +455,10 @@ def main():
     
     
     # graph function
-    success3 = draw_graph(result_table, WORK_PATH + "scatter_graph.png")
+    try:
+        success3 = draw_graph(option_table, time_table, diff_table, WORK_PATH + "scatter_graph.html")
     
-    if(success3 == False):
+    except:
         set_color(12)
         print("\nGraph drawing Error!\n")
         set_color(7)
