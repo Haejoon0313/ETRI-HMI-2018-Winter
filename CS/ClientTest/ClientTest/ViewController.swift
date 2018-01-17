@@ -16,14 +16,15 @@ class ViewController: UIViewController, ARSessionDelegate {
     let configuration = ARWorldTrackingConfiguration()
     
     let host = "127.0.0.1"
-    let port = 8010
+    let port = 8020
     var client: TCPClient?
     
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
-        client = TCPClient(address: host, port: Int32(port)) //make client socket
+        client = TCPClient(address: host, port: Int32(port))
         
         self.sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin,ARSCNDebugOptions.showFeaturePoints]
         self.sceneView.session.run(configuration)
@@ -37,70 +38,84 @@ class ViewController: UIViewController, ARSessionDelegate {
     }
     
     @IBAction func sendButtonAction(_ sender: Any) {
-      
+        
         let captureImage:UIImage = self.sceneView.snapshot()
         //UIImageWriteToSavedPhotosAlbum(captureImage, nil, nil, nil)  //save photos at album (must add photo library addition in Info.plist)
-    
+        
         //change UIImage to binary data
-        let imageData: NSData = UIImageJPEGRepresentation(captureImage, 0)! as NSData
+        //let imageData: NSData = UIImagePNGRepresentation(captureImage)! as NSData
+        
+        guard let imageData = captureImage.pixelData() else {return} //3001500
+        
+        /*
+         func getArrayOfBytesFromImage(imageData:NSData) -> NSMutableArray{
+         
+         let count = imageData.length / MemoryLayout<UInt8>.size // the number of elements:
+         var bytes = [UInt8](repeating: 0, count: count)
+         imageData.getBytes(&bytes, length:count * MemoryLayout<UInt8>.size) // copy bytes into array
+         var byteArray:NSMutableArray = NSMutableArray()
+         for i in 0..<count{
+         byteArray.add(NSNumber(value: bytes[i]))
+         }
+         return byteArray
+         }
+         */
+        
+        
+        // test view (black or white)
+        /*
+         var test_array: [Byte] = []
+         let zero = [Byte](repeating: 0 , count:320*3)
+         let full = [Byte](repeating: 255, count:320*3)
+         
+         for i in 0..<240 {
+         if(i%2 == 0){test_array.append(contentsOf: zero)}
+         else {test_array.append(contentsOf: full)}
+         }
+         */
         
         let AR_IMG_WIDTH = Int(captureImage.size.width) //750
         let AR_IMG_HEIGHT = Int(captureImage.size.height) //1334
-        let AR_BUFFER_SIZE = AR_IMG_WIDTH * AR_IMG_HEIGHT * 3 + 6 //3001506 , 3(R,G,B),6 (MMS+MME)
+        let AR_BUFFER_SIZE = AR_IMG_WIDTH * AR_IMG_HEIGHT * 3 + 6 //3001506
         
-        print("size of imageData 750 * 1334 * 3 : \(imageData.length)")
-        
-       //NSData to [Byte]
-        var mms: [Byte] = [Byte]("MMS".utf8) // 3Byte
-        let mme: [Byte] = [Byte]("MME".utf8) // 3Byte
-        var copyArray = [Byte](repeating: 0, count: imageData.length)
-        
-        imageData.getBytes(&copyArray, length: imageData.length)
-        mms.append(contentsOf: copyArray)
+        var mms: [Byte] = [Byte]("MMS".utf8)
+        let mme: [Byte] = [Byte]("MME".utf8)
+        mms.append(contentsOf: imageData)
         mms.append(contentsOf: mme)
-        
-        print("size of send byte array = \(mms.count)")
         
         //try client connecting ...
         guard let client = client else { return }
         
         switch client.connect(timeout: 10) {
-                case .success:
-                    print("Connected to host \(client.address)")
-                    if let response = sendRequest(string: "GET / HTTP/1.0\n\n", using: client, databuffer: mms) {
-                        print("Response: \(response)")
-                    }
-                case .failure(let error):
-                    print(String(describing: error))
+        case .success:
+            print("Connected to host \(client.address)")
+            if let response = sendRequest(string: "GET / HTTP/1.0\n\n", using: client, databuffer: mms) {
+                print("Response: \(response)")
             }
+        case .failure(let error):
+            print(String(describing: error))
+        }
     }
+    
     
     private func sendRequest(string: String, using client: TCPClient, databuffer: [Byte]) -> String? {
         
         print("Sending data ... ")
         
-        //send [Byte] Data
         switch client.send(data: databuffer) {
-            case .success:
-              return readResponse(from: client)
-            case .failure(let error):
-                print(String(describing: error))
-                return nil
+        case .success:
+            return readResponse(from: client)
+        case .failure(let error):
+            print(String(describing: error))
+            return nil
         }
-        /* Send String Data
-        switch client.send(string: string) {
-            case .success:
-                return readResponse(from: client)
-            case .failure(let error):
-                print(String(describing: error))
-                return nil
-        }
-        */
+        
     }
     
     private func readResponse(from client: TCPClient) -> String? {
         
-        guard let response = client.read(4096) else { return nil }
+        
+        guard let response = client.read(67) else { return nil }
         
         //1) MMS: 3Byte
         //2) NumbOfObj: 4Byte(UInt32)
@@ -113,14 +128,14 @@ class ViewController: UIViewController, ARSessionDelegate {
         //                  |8) MME: 3Byte
         //-----------------------------
         //9) MME: 3Byte
-    
+        
         var data_one_obj1 : [Byte] = [0]
         
         //2) NumbOfObj: 4Byte(UInt32)
         for idx in 3..<7 {
             data_one_obj1.append(response[idx])
         }
-            data_one_obj1.removeFirst()
+        data_one_obj1.removeFirst()
         
         let data = NSData(bytes: data_one_obj1, length: 4)
         var num_Objs: UInt32 = 0
@@ -129,14 +144,14 @@ class ViewController: UIViewController, ARSessionDelegate {
         print("Number of Object = \(num_Objs)")
         
         //let num_Obj = Int(num_Objs) //32bit -> 64bit(Origin Int in Swift)
-
+        
         for iObj in 0..<Int(num_Objs) {
             
             //3) ObjId: 1byte(UInt8)
             print("Id :")
             var data_one_obj2 : [Byte] = [0] //초기화 이후 removefirst로 없애줄것!
             for idx in 7+(iObj)*57..<7+(iObj+1)*57{  //data_one_obj = data[index_start+7+iObj*len_one_obj : index_start+7+(iObj+1)*len_one_obj]
-                    data_one_obj2.append(response[idx])
+                data_one_obj2.append(response[idx])
             }
             data_one_obj2.removeFirst() //초기화 값 제거
             
@@ -148,12 +163,11 @@ class ViewController: UIViewController, ARSessionDelegate {
             print("Rot Information") //36Byte
             for j in 0..<9{
                 var data_one_obj3: [Byte] = [0]
-                
                 for k in 1+j*4..<1+(j+1)*4 {
-                        data_one_obj3.append(response[k])
+                    data_one_obj3.append(response[k])
                 }
                 data_one_obj3.removeFirst() //4byte : 1개의 float 생성
-            
+                
                 var rot: Float = 0.0
                 memcpy(&rot, data_one_obj3, 4)
                 print("\(rot)")
@@ -208,11 +222,31 @@ class ViewController: UIViewController, ARSessionDelegate {
     }
     
     private func appendToTextField(string: String) {
-       print(string)
-    //textView.text = textView.text.appending("\n\(string)")
+        print(string)
+        //textView.text = textView.text.appending("\n\(string)")
     }
     
     
+}
+
+extension UIImage {
+    func pixelData() -> [UInt8]? {
+        let size = self.size
+        let dataSize = size.width * size.height * 3
+        var pixelData = [UInt8](repeating: 0, count: Int(dataSize))
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let context = CGContext(data: &pixelData,
+                                width: Int(size.width),
+                                height: Int(size.height),
+                                bitsPerComponent: 8,
+                                bytesPerRow: 3 * Int(size.width),
+                                space: colorSpace,
+                                bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)
+        guard let cgImage = self.cgImage else { return nil }
+        context?.draw(cgImage, in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+        
+        return pixelData
+    }
 }
 
 
