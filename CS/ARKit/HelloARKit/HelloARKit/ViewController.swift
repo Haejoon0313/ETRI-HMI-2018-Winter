@@ -51,7 +51,7 @@ class ViewController: UIViewController {
         
     }
     
-    //Add pyramid
+    //Add pyramid(show camera's orientation and location)
     @IBAction func add(_ sender: Any) {
         
         let pyramidNode = SCNNode(geometry: SCNPyramid(width: 0.04, height: 0.06, length: 0.02))
@@ -113,9 +113,9 @@ class ViewController: UIViewController {
     func addItem(hitTestResult: ARHitTestResult){
         let thirdColumn = hitTestResult.worldTransform.columns.3 //position
         //print(thirdColumn.x, thirdColumn.y, thirdColumn.z)
-        let boxNode = SCNNode(geometry: SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0))
+        let boxNode = SCNNode(geometry: SCNBox(width: 0.155, height: 0.225, length: 0.06, chamferRadius: 0))
         boxNode.geometry?.firstMaterial?.diffuse.contents = UIColor.red
-        boxNode.position = SCNVector3(thirdColumn.x, thirdColumn.y, thirdColumn.z)
+        boxNode.position = SCNVector3(thirdColumn.x, thirdColumn.y + 0.1135, thirdColumn.z)
         self.sceneView.scene.rootNode.addChildNode(boxNode)
         
     }
