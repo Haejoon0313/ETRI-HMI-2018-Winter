@@ -210,13 +210,15 @@ def data_from_time():
 
 
 # search through folder for return image different
-def data_from_diff(options_list):
+def data_from_diff(options_list, result_path):
     
     print("\n")
     
     diff_option_list = []
     result = []
     diff_len = 1.0
+    
+    save_data = open(result_path, 'w')
     
     for o in options_list: # pick options which have more than one
         if(len(o) > 1):
@@ -241,11 +243,16 @@ def data_from_diff(options_list):
                         
                         temp = image_diff(WORK_PATH + "scene" + i0 + "/sample" + i1 + "/D" + i2 + "&G" + i3 + "/" + i4 + "/", "Data/Reference/180116/" + "scene" + i0 + "/sample1280/D16&G16/" + i4 + "/Animation_0501.png", int(i0))
                         result_temp = result_temp + temp
-                        
                         flag += 1.0
+                        
+                        print("\rImage Difference Processing...   " + str(int(flag)) + "/" + str(int(diff_len)) + "  (" + str(round(flag*100.0/diff_len, 2)) + " %)"),
                     
                     result_temp = result_temp / len([ENV_FOLDER[0], ENV_FOLDER[7], ENV_FOLDER[18]])
                     result.append(str(result_temp))
+                    save_data.write(str(result_temp))
+                    save_data.write("\n")
+    
+    save_data.close()
     
     return result
 
@@ -443,7 +450,7 @@ def main():
     
     try:
         success2 = createCSV(result_table)
-    
+     
     except:
         set_color(12)
         print("\nCreate CSV file Error!\n")
