@@ -15,7 +15,7 @@ class ViewController: UIViewController, ARSessionDelegate {
     @IBOutlet weak var sceneView: ARSCNView!
     let configuration = ARWorldTrackingConfiguration()
     
-    let host = "127.0.0.1"
+    let host =   "127.0.0.1"//"129.254.87.77"//
     let port = 8020
     var client: TCPClient?
     
@@ -45,7 +45,7 @@ class ViewController: UIViewController, ARSessionDelegate {
         //change UIImage to binary data
         //let imageData: NSData = UIImagePNGRepresentation(captureImage)! as NSData
         
-        guard let imageData = captureImage.pixelData() else {return} //3001500
+        //*******guard let imageData = captureImage.pixelData() else {return} //3001500
         
         /*
          func getArrayOfBytesFromImage(imageData:NSData) -> NSMutableArray{
@@ -61,26 +61,26 @@ class ViewController: UIViewController, ARSessionDelegate {
          }
          */
         
-        
-        // test view (black or white)
-        /*
-         var test_array: [Byte] = []
-         let zero = [Byte](repeating: 0 , count:320*3)
-         let full = [Byte](repeating: 255, count:320*3)
-         
-         for i in 0..<240 {
-         if(i%2 == 0){test_array.append(contentsOf: zero)}
-         else {test_array.append(contentsOf: full)}
-         }
-         */
-        
         let AR_IMG_WIDTH = Int(captureImage.size.width) //750
         let AR_IMG_HEIGHT = Int(captureImage.size.height) //1334
         let AR_BUFFER_SIZE = AR_IMG_WIDTH * AR_IMG_HEIGHT * 3 + 6 //3001506
         
+        // test view (black or white)
+        
+        var test_array: [Byte] = []
+        let zero = [Byte](repeating: 0 , count:320*3)
+        let full = [Byte](repeating: 255, count:320*3)
+        
+        
+        for i in 0..<240 {
+            if(i%2 == 0){test_array.append(contentsOf: zero)}
+            else {test_array.append(contentsOf: full)}
+        }
+        
+        
         var mms: [Byte] = [Byte]("MMS".utf8)
         let mme: [Byte] = [Byte]("MME".utf8)
-        mms.append(contentsOf: imageData)
+        mms.append(contentsOf: test_array)
         mms.append(contentsOf: mme)
         
         //try client connecting ...
@@ -89,7 +89,7 @@ class ViewController: UIViewController, ARSessionDelegate {
         switch client.connect(timeout: 10) {
         case .success:
             print("Connected to host \(client.address)")
-            if let response = sendRequest(string: "GET / HTTP/1.0\n\n", using: client, databuffer: mms) {
+            if let response = sendRequest(using: client, databuffer: mms) {
                 print("Response: \(response)")
             }
         case .failure(let error):
@@ -98,10 +98,35 @@ class ViewController: UIViewController, ARSessionDelegate {
     }
     
     
-    private func sendRequest(string: String, using client: TCPClient, databuffer: [Byte]) -> String? {
+    private func sendRequest(using client: TCPClient, databuffer: [Byte]) -> String? {
         
         print("Sending data ... ")
         
+        /* divide 방식
+         var data1: [Byte] = []
+         var data2: [Byte] = []
+         
+         for i in 0..<databuffer.count/2{
+         data1.append(databuffer[i])
+         data2.append(databuffer[i+databuffer.count/2])
+         }
+         print("data1.count = \(data1.count)")
+         print("data2.count = \(data2.count)")
+         
+         
+         switch client.send(data: data1) {
+         case .success:
+         switch client.send(data: data2) {
+         case .success:
+         return readResponse(from: client)
+         case .failure(let error):
+         print(String(describing: error))
+         return nil
+         }
+         case .failure:
+         return nil
+         }
+         */
         switch client.send(data: databuffer) {
         case .success:
             return readResponse(from: client)
@@ -117,6 +142,11 @@ class ViewController: UIViewController, ARSessionDelegate {
         
         guard let response = client.read(67) else { return nil }
         
+        print("Read Succes!")
+        //for i in 0..<67 {
+        //    print(response[i])
+        //}
+        
         //1) MMS: 3Byte
         //2) NumbOfObj: 4Byte(UInt32)
         //-----------------------------
@@ -129,93 +159,98 @@ class ViewController: UIViewController, ARSessionDelegate {
         //-----------------------------
         //9) MME: 3Byte
         
-        var data_one_obj1 : [Byte] = [0]
         
-        //2) NumbOfObj: 4Byte(UInt32)
-        for idx in 3..<7 {
-            data_one_obj1.append(response[idx])
-        }
-        data_one_obj1.removeFirst()
+        /* Decoding
+         
+         var data_one_obj1 : [Byte] = [0]
+         
+         //2) NumbOfObj: 4Byte(UInt32)
+         for idx in 3..<7 {
+         data_one_obj1.append(response[idx])
+         }
+         data_one_obj1.removeFirst()
+         
+         let data = NSData(bytes: data_one_obj1, length: 4)
+         var num_Objs: UInt32 = 0
+         data.getBytes(&num_Objs, length: 4)
+         num_Objs = UInt32(bigEndian: num_Objs) //change to Big Endian(Swift default: LittleEndian)
+         print("Number of Object = \(num_Objs)")
+         
+         //let num_Obj = Int(num_Objs) //32bit -> 64bit(Origin Int in Swift)
+         
+         for iObj in 0..<Int(num_Objs) {
+         
+         //3) ObjId: 1byte(UInt8)
+         print("Id :")
+         var data_one_obj2 : [Byte] = [0] //초기화 이후 removefirst로 없애줄것!
+         for idx in 7+(iObj)*57..<7+(iObj+1)*57{  //data_one_obj = data[index_start+7+iObj*len_one_obj : index_start+7+(iObj+1)*len_one_obj]
+         data_one_obj2.append(response[idx])
+         }
+         data_one_obj2.removeFirst() //초기화 값 제거
+         
+         if let string = String(bytes: data_one_obj2, encoding: .utf8){  //Byte -> string(Decode)
+         print(string.first!)
+         }
+         
+         //4) RMat: 4byte * 9 : 36byte (Float)
+         print("Rot Information") //36Byte
+         for j in 0..<9{
+         var data_one_obj3: [Byte] = [0]
+         for k in 1+j*4..<1+(j+1)*4 {
+         data_one_obj3.append(response[k])
+         }
+         data_one_obj3.removeFirst() //4byte : 1개의 float 생성
+         
+         var rot: Float = 0.0
+         memcpy(&rot, data_one_obj3, 4)
+         print("\(rot)")
+         }
+         
+         //5) Tvec: 4byte * 3 : 12byte (Float)
+         print("Trn Information") //12Byte
+         for j in 0..<3{
+         var data_one_obj4: [Byte] = [0]
+         
+         for k in 37+j*4..<37+(j+1)*4 {
+         data_one_obj4.append(response[k])
+         }
+         data_one_obj4.removeFirst() //4byte : 1개의 float 생성
+         
+         var trn: Float = 0.0
+         memcpy(&trn, data_one_obj4, 4)
+         print("\(trn)")
+         }
+         
+         
+         print("X, Y Information")
+         //6) Center_x: 4byte (UInt32)
+         var center_x: UInt32 = 0
+         var center_y: UInt32 = 0
+         
+         var data_one_obj5: [Byte] = [0]
+         for j in 49..<53 {
+         data_one_obj5.append(response[j])
+         }
+         data_one_obj5.removeFirst()
+         let data = NSData(bytes: data_one_obj5, length: 4)
+         data.getBytes(&center_x, length: 4)
+         center_x = UInt32(bigEndian: center_x) //change to Big Endian
+         print("\(center_x)")
+         
+         //7) Center_Y: 4byte (UInt32)
+         var data_one_obj6: [Byte] = [0]
+         for j in 53..<57 {
+         data_one_obj6.append(response[j])
+         }
+         data_one_obj6.removeFirst()
+         let data_y = NSData(bytes: data_one_obj6, length: 4)
+         data_y.getBytes(&center_y, length: 4)
+         center_y = UInt32(bigEndian: center_y) //change to Big Endian
+         print("\(center_y)")
+         
+         }
+         */
         
-        let data = NSData(bytes: data_one_obj1, length: 4)
-        var num_Objs: UInt32 = 0
-        data.getBytes(&num_Objs, length: 4)
-        num_Objs = UInt32(bigEndian: num_Objs) //change to Big Endian(Swift default: LittleEndian)
-        print("Number of Object = \(num_Objs)")
-        
-        //let num_Obj = Int(num_Objs) //32bit -> 64bit(Origin Int in Swift)
-        
-        for iObj in 0..<Int(num_Objs) {
-            
-            //3) ObjId: 1byte(UInt8)
-            print("Id :")
-            var data_one_obj2 : [Byte] = [0] //초기화 이후 removefirst로 없애줄것!
-            for idx in 7+(iObj)*57..<7+(iObj+1)*57{  //data_one_obj = data[index_start+7+iObj*len_one_obj : index_start+7+(iObj+1)*len_one_obj]
-                data_one_obj2.append(response[idx])
-            }
-            data_one_obj2.removeFirst() //초기화 값 제거
-            
-            if let string = String(bytes: data_one_obj2, encoding: .utf8){  //Byte -> string(Decode)
-                print(string.first!)
-            }
-            
-            //4) RMat: 4byte * 9 : 36byte (Float)
-            print("Rot Information") //36Byte
-            for j in 0..<9{
-                var data_one_obj3: [Byte] = [0]
-                for k in 1+j*4..<1+(j+1)*4 {
-                    data_one_obj3.append(response[k])
-                }
-                data_one_obj3.removeFirst() //4byte : 1개의 float 생성
-                
-                var rot: Float = 0.0
-                memcpy(&rot, data_one_obj3, 4)
-                print("\(rot)")
-            }
-            
-            //5) Tvec: 4byte * 3 : 12byte (Float)
-            print("Trn Information") //12Byte
-            for j in 0..<3{
-                var data_one_obj4: [Byte] = [0]
-                
-                for k in 37+j*4..<37+(j+1)*4 {
-                    data_one_obj4.append(response[k])
-                }
-                data_one_obj4.removeFirst() //4byte : 1개의 float 생성
-                
-                var trn: Float = 0.0
-                memcpy(&trn, data_one_obj4, 4)
-                print("\(trn)")
-            }
-            
-            
-            print("X, Y Information")
-            //6) Center_x: 4byte (UInt32)
-            var center_x: UInt32 = 0
-            var center_y: UInt32 = 0
-            
-            var data_one_obj5: [Byte] = [0]
-            for j in 49..<53 {
-                data_one_obj5.append(response[j])
-            }
-            data_one_obj5.removeFirst()
-            let data = NSData(bytes: data_one_obj5, length: 4)
-            data.getBytes(&center_x, length: 4)
-            center_x = UInt32(bigEndian: center_x) //change to Big Endian
-            print("\(center_x)")
-            
-            //7) Center_Y: 4byte (UInt32)
-            var data_one_obj6: [Byte] = [0]
-            for j in 53..<57 {
-                data_one_obj6.append(response[j])
-            }
-            data_one_obj6.removeFirst()
-            let data_y = NSData(bytes: data_one_obj6, length: 4)
-            data_y.getBytes(&center_y, length: 4)
-            center_y = UInt32(bigEndian: center_y) //change to Big Endian
-            print("\(center_y)")
-            
-        }
         
         //print all object separately
         return String(bytes: response, encoding: .utf8)
@@ -226,8 +261,9 @@ class ViewController: UIViewController, ARSessionDelegate {
         //textView.text = textView.text.appending("\n\(string)")
     }
     
-    
 }
+
+
 
 extension UIImage {
     func pixelData() -> [UInt8]? {
