@@ -18,7 +18,7 @@ class ViewController: UIViewController, ARSessionDelegate {
     let host =   "127.0.0.1"//"129.254.87.77"//
     let port = 8020
     var client: TCPClient?
-    
+
     
     override func viewDidLoad() {
         
@@ -60,19 +60,19 @@ class ViewController: UIViewController, ARSessionDelegate {
          return byteArray
          }
          */
-        
-        let AR_IMG_WIDTH = Int(captureImage.size.width) //750
-        let AR_IMG_HEIGHT = Int(captureImage.size.height) //1334
+
+        let AR_IMG_WIDTH = 750 //Int(captureImage.size.width) //750
+        let AR_IMG_HEIGHT = 1334//Int(captureImage.size.height) //1334
         let AR_BUFFER_SIZE = AR_IMG_WIDTH * AR_IMG_HEIGHT * 3 + 6 //3001506
         
+       
         // test view (black or white)
-        
         var test_array: [Byte] = []
-        let zero = [Byte](repeating: 0 , count:320*3)
-        let full = [Byte](repeating: 255, count:320*3)
+        let zero = [Byte](repeating: 0 , count: AR_IMG_WIDTH * 3)
+        let full = [Byte](repeating: 255, count: AR_IMG_WIDTH * 3)
         
         
-        for i in 0..<240 {
+        for i in 0..<AR_IMG_HEIGHT {
             if(i%2 == 0){test_array.append(contentsOf: zero)}
             else {test_array.append(contentsOf: full)}
         }
@@ -130,8 +130,9 @@ class ViewController: UIViewController, ARSessionDelegate {
         switch client.send(data: databuffer) {
         case .success:
             return readResponse(from: client)
-        case .failure(let error):
-            print(String(describing: error))
+        case .failure://(let error):
+            //print(String(describing: error))
+            print(Error.self)
             return nil
         }
         
@@ -260,6 +261,30 @@ class ViewController: UIViewController, ARSessionDelegate {
         print(string)
         //textView.text = textView.text.appending("\n\(string)")
     }
+
+    func pixelValues(fromCGImage imageRef: CGImage?) -> (pixelValues: [UInt8]?, width: Int, height: Int)
+    {
+        var width = 0
+        var height = 0
+        var pixelValues: [UInt8]?
+        if let imageRef = imageRef {
+            width = imageRef.width
+            height = imageRef.height
+            let bitsPerComponent = imageRef.bitsPerComponent
+            let bytesPerRow = imageRef.bytesPerRow
+            let totalBytes = height * bytesPerRow
+            
+            let colorSpace = CGColorSpaceCreateDeviceGray()
+            var intensities = [UInt8](repeating: 0, count: totalBytes)
+            
+            let contextRef = CGContext(data: &intensities, width: width, height: height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: 0)
+            contextRef?.draw(imageRef, in: CGRect(x: 0.0, y: 0.0, width: CGFloat(width), height: CGFloat(height)))
+            
+            pixelValues = intensities
+        }
+        
+        return (pixelValues, width, height)
+    }
     
 }
 
@@ -268,14 +293,14 @@ class ViewController: UIViewController, ARSessionDelegate {
 extension UIImage {
     func pixelData() -> [UInt8]? {
         let size = self.size
-        let dataSize = size.width * size.height * 3
+        let dataSize = size.width * size.height * 4
         var pixelData = [UInt8](repeating: 0, count: Int(dataSize))
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         let context = CGContext(data: &pixelData,
                                 width: Int(size.width),
                                 height: Int(size.height),
                                 bitsPerComponent: 8,
-                                bytesPerRow: 3 * Int(size.width),
+                                bytesPerRow: 4 * Int(size.width),
                                 space: colorSpace,
                                 bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)
         guard let cgImage = self.cgImage else { return nil }
