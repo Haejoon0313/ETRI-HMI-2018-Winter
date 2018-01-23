@@ -16,7 +16,7 @@ class TcpSocket: NSObject, StreamDelegate {
     var port:Int?
     var inputStream: InputStream?
     var outputStream: OutputStream?
- 
+    
     func connect(host: String, port: Int) {
         self.host = host
         self.port = port
@@ -38,15 +38,15 @@ class TcpSocket: NSObject, StreamDelegate {
     }
     
     /*
-    func send(data: Data) -> Int {
-        let bytesWritten = data.withUnsafeBytes { outputStream?.write($0, maxLength: data.count) }
-        return bytesWritten!
-    }
-    func send(data: String) -> Int {
-        let bytesWritten = outputStream?.write(data, maxLength:data.characters.count)
-        return bytesWritten!
-    }
-    */
+     func send(data: Data) -> Int {
+     let bytesWritten = data.withUnsafeBytes { outputStream?.write($0, maxLength: data.count) }
+     return bytesWritten!
+     }
+     func send(data: String) -> Int {
+     let bytesWritten = outputStream?.write(data, maxLength:data.characters.count)
+     return bytesWritten!
+     }
+     */
     
     
     func send(data: [Byte]) {
@@ -89,50 +89,50 @@ class TcpSocket: NSObject, StreamDelegate {
         inputStream?.read(&buffer, maxLength: buffersize)
         return buffer
         /*
-        var dropCount = buffersize - bytesRead!
-        if dropCount < 0 {
-            dropCount = 0
-        }
-        let chunk = buffer.dropLast(dropCount)
-        return Data(chunk)
+         var dropCount = buffersize - bytesRead!
+         if dropCount < 0 {
+         dropCount = 0
+         }
+         let chunk = buffer.dropLast(dropCount)
+         return Data(chunk)
          */
     }
-
+    
     func disconnect() {
         inputStream?.close()
         outputStream?.close()
     }
 }
-   
-   /* locate in class, origin
-    func stream(_ stream: Stream, handle eventCode: Stream.Event)
-        print("event:\(eventCode)")
-        if stream === inputStream {
-            switch eventCode {
-            case Stream.Event.errorOccurred:
-                print("inputStream:ErrorOccurred")
-            case Stream.Event.openCompleted:
-                print("inputStream:OpenCompleted")
-            case Stream.Event.hasBytesAvailable:
-                print("inputStream:HasBytesAvailable")
-                
-            default:
-                break
-            }
-        }
-        else if stream === outputStream {
-            switch eventCode {
-            case Stream.Event.errorOccurred:
-                print("outputStream:ErrorOccurred")
-            case Stream.Event.openCompleted:
-                print("outputStream:OpenCompleted")
-            case Stream.Event.hasSpaceAvailable:
-                print("outputStream:HasSpaceAvailable")
-            default:
-                break
-            }
-        }
-    }
+
+/* locate in class, origin
+ func stream(_ stream: Stream, handle eventCode: Stream.Event)
+ print("event:\(eventCode)")
+ if stream === inputStream {
+ switch eventCode {
+ case Stream.Event.errorOccurred:
+ print("inputStream:ErrorOccurred")
+ case Stream.Event.openCompleted:
+ print("inputStream:OpenCompleted")
+ case Stream.Event.hasBytesAvailable:
+ print("inputStream:HasBytesAvailable")
+ 
+ default:
+ break
+ }
+ }
+ else if stream === outputStream {
+ switch eventCode {
+ case Stream.Event.errorOccurred:
+ print("outputStream:ErrorOccurred")
+ case Stream.Event.openCompleted:
+ print("outputStream:OpenCompleted")
+ case Stream.Event.hasSpaceAvailable:
+ print("outputStream:HasSpaceAvailable")
+ default:
+ break
+ }
+ }
+ }
  */
 
 
