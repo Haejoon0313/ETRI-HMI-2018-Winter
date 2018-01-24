@@ -8,8 +8,8 @@ CHEEZIT_PIXELS = 48256.0
 MUSTARD_PIXELS = 17467.0
 
 
-im1 = Image.open("Render/scene0/sample10/D2&G2/balcony_2k.hdr/Animation_0501.png")
-im2 = Image.open("Data/Reference/180116/scene0/sample1280/D16&G16/balcony_2k.hdr/Animation_0501.png")
+im1 = Image.open("Render/scene0/sample20/D16&G16/bathroom_2k.hdr/Diffuse_0105.png")
+im2 = Image.open("Render/scene0/sample20/D16&G16/bathroom_2k.hdr/Principled_0105.png")
 
 # image difference loop
 def image_diff_loop():
@@ -32,11 +32,11 @@ def image_diff(a, b):
     diff = diff.convert('L')
     diff = diff.point(point_table)
     
-    diff.save("Render/diff.png")
+    diff.save("Render/scene0/sample20/D16&G16/bathroom_2k.hdr/diff.png")
     
     for i in range(480):
         for j in range(640):
-            if(diff_rgb[i][j].all() != 0):
+            if(diff_rgb[i][j][0:3].any() != 0):
                 
                 temp +=1
               
@@ -48,9 +48,6 @@ def image_diff(a, b):
                 
                 temp2 += 1
     
-    result0 = math.sqrt(result0 / PLANE_PIXELS)
-    result1 = math.sqrt(result1 / PLANE_PIXELS)
-    result2 = math.sqrt(result2 / PLANE_PIXELS)
     
     result = (result0 + result1 + result2) / 3.0
     

@@ -121,7 +121,7 @@ def unpack_time(time):
 # save diff image as png then return diff / pixels
 def image_diff(x, ref, scene_num):
     
-    image_x = Image.open(x + "Animation_0501.png")
+    image_x = Image.open(x + "Animation_0201.png")
     image_ref = Image.open(ref)
     
     result0 = 0.0
@@ -140,7 +140,7 @@ def image_diff(x, ref, scene_num):
 
     for i in range(480):
         for j in range(640):
-            if(diff_rgb[i][j].all() != 0):
+            if(diff_rgb[i][j][0:3].any() != 0):
               
                     result0 += math.pow(diff_rgb[i][j][0] / 255.0, 2)
                     result1 += math.pow(diff_rgb[i][j][1] / 255.0, 2)
@@ -241,7 +241,7 @@ def data_from_diff(options_list, result_path):
                         
                         print("\rImage Difference Processing...   " + str(int(flag)) + "/" + str(int(diff_len)) + "  (" + str(round(flag*100.0/diff_len, 2)) + " %)"),
                         
-                        temp = image_diff(WORK_PATH + "scene" + i0 + "/sample" + i1 + "/D" + i2 + "&G" + i3 + "/" + i4 + "/", "Data/Reference/180116/" + "scene" + i0 + "/sample1280/D16&G16/" + i4 + "/Animation_0501.png", int(i0))
+                        temp = image_diff(WORK_PATH + "scene" + i0 + "/sample" + i1 + "/D" + i2 + "&G" + i3 + "/" + i4 + "/", "Data/Reference/180116/" + "scene" + i0 + "/sample1280/D16&G16/" + i4 + "/Animation_0201.png", int(i0))
                         result_temp = result_temp + temp
                         flag += 1.0
                         
@@ -353,7 +353,7 @@ def draw_graph(option_data, time_data, diff_data, result_path):
         temp = labeling(c)
         Z.append(temp)
     
-    tooltip = mpld3.plugins.PointLabelTooltip(scatter, labels=Z)
+    tooltip = mpld3.plugins.PointLabelTooltip(scatter, labels=Z, location='top right')
     mpld3.plugins.connect(fig, tooltip)
     
     mpld3.save_html(fig, result_path)
@@ -416,12 +416,12 @@ def main():
     time_table = data_from_time()
     
     try:
-        diff_table = data_from_diff(options_list)
+        diff_table = data_from_diff(options_list, WORK_PATH + "image_diff.txt")
     
     except:
         
         set_color(12)
-        print("Image difference Error!\n")
+        print("\nImage difference Error!\n")
         set_color(7)
         
         return False

@@ -42,7 +42,7 @@ def draw_graph(option_data, time_data, diff_data, result_path):
         temp = labeling(c)
         Z.append(temp)
     
-    tooltip = mpld3.plugins.PointLabelTooltip(scatter, labels=Z)
+    tooltip = mpld3.plugins.PointLabelTooltip(scatter, labels=Z, location='top right')
     mpld3.plugins.connect(fig, tooltip)
     
     mpld3.save_html(fig, result_path)
@@ -71,5 +71,5 @@ option_table = [['CPU', '100', '10', '32', '2', '2', '1'], ['CPU', '100', '10', 
 time_table = ["1 : 20.837083", "1 : 21.121812", "1 : 21.210286", "1 : 21.20286"]
 diff_table = ["0.4", "0.11", ".08", "0.19"]
 
-draw_graph(option_table, time_table, diff_table, "Render/Airplane/scatter_graph.html")
+draw_graph(option_table, time_table, diff_table, "Render/scatter_graph.html")
 
