@@ -14,6 +14,7 @@
 		D75206672018591400E04636 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D75206652018591400E04636 /* LaunchScreen.storyboard */; };
 		D752066F20186BE700E04636 /* ViewController+ARSCNViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D752066E20186BE700E04636 /* ViewController+ARSCNViewDelegate.swift */; };
 		D752067520186EA800E04636 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = D752067420186EA800E04636 /* art.scnassets */; };
+		D77C68DE201B1C9900594EA0 /* RobotArm.scn in Resources */ = {isa = PBXBuildFile; fileRef = D77C68DD201B1C9900594EA0 /* RobotArm.scn */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		D75206682018591400E04636 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D752066E20186BE700E04636 /* ViewController+ARSCNViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+ARSCNViewDelegate.swift"; sourceTree = "<group>"; };
 		D752067420186EA800E04636 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
+		D77C68DD201B1C9900594EA0 /* RobotArm.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = RobotArm.scn; path = ../../../../../Downloads/RobotArm.scn; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 				D752065C2018591400E04636 /* AppDelegate.swift */,
 				D752065E2018591400E04636 /* ViewController.swift */,
 				D752066E20186BE700E04636 /* ViewController+ARSCNViewDelegate.swift */,
+				D77C68DD201B1C9900594EA0 /* RobotArm.scn */,
 				D75206602018591400E04636 /* Main.storyboard */,
 				D75206632018591400E04636 /* Assets.xcassets */,
 				D75206652018591400E04636 /* LaunchScreen.storyboard */,
@@ -132,6 +135,7 @@
 				D75206672018591400E04636 /* LaunchScreen.storyboard in Resources */,
 				D752067520186EA800E04636 /* art.scnassets in Resources */,
 				D75206642018591400E04636 /* Assets.xcassets in Resources */,
+				D77C68DE201B1C9900594EA0 /* RobotArm.scn in Resources */,
 				D75206622018591400E04636 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

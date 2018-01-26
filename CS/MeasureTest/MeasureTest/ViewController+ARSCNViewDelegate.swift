@@ -12,18 +12,24 @@ extension ViewController: ARSCNViewDelegate {
     
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        
         guard let startingPoint = self.startingPoint else {return}
+        guard let endingPoint = self.endingPoint else{return}
         //guard let pointOfView = self.sceneView.pointOfView else {return}
+        
         //let transform = pointOfView.transform
-        //let location = SCNVector3(transform.m41, transform.m42, transform.m43) // column4 of transform is location
-        // location.position - startingPoint.position.x 이런식으로
+        //location = SCNVector3(transform.m41, transform.m42, transform.m43) //pointOfView의 location
+        //let xDistance = location.x - startingPoint.position.x
+        //let yDistance = location.y - startingPoint.position.y
+        //let zDistance = location.z - startingPoint.position.z
         
-        let xDistance = abs((endingPoint?.position.x)! - startingPoint.position.x)
-        let yDistance = abs((endingPoint?.position.y)! - startingPoint.position.y)
-        let zDistance = abs((endingPoint?.position.z)! - startingPoint.position.z)
+        //Banana Version
+        let xDistance = abs((endingPoint.position.x) - startingPoint.position.x)
+        let yDistance = abs((endingPoint.position.y) - startingPoint.position.y)
+        let zDistance = abs((endingPoint.position.z) - startingPoint.position.z)
         
-        DispatchQueue.main.async { //Main Thread.
-            //print("Show Distance Information.")
+        
+        DispatchQueue.main.async {
             self.xLabel.text = String(format: "%.2f", xDistance) + "m"
             self.yLabel.text = String(format: "%.2f", yDistance) + "m"
             self.zLabel.text = String(format: "%.2f", zDistance) + "m"
