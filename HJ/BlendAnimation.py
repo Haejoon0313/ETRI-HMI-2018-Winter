@@ -212,8 +212,8 @@ scene.cycles.diffuse_bounces = 2
 scene.cycles.glossy_bounces = 2
 scene.frame_start = 101
 scene.frame_end = 300
-random.seed(180124) # test date for seed
-scene_num = 1
+random.seed(180129) # test date for seed
+scene_num = 5
 
 scene.cycles.max_bounces = 4 # glossy + diffuse
 scene.cycles.min_bounces = 3
@@ -223,11 +223,11 @@ scene.cycles.min_bounces = 3
 # Main function
 #
 
-sample_index = [10, 20, 40, 80, 160, 320]
-diffuse_index = [2, 4, 8, 16]
-glossy_index = [2, 4, 8, 16]
+sample_index = [20]
+diffuse_index = [16]
+glossy_index = [16]
 
-model_index = [2, 6, 19, 0] # 0: table
+model_index = [2, 4, 6, 11, 19, 0] # 0: table
 
 # camera initialize
 cameraInit(D.objects['_Camera'])
@@ -237,11 +237,15 @@ scenes_inform = []
 
 for i in range(scene_num):
     scenes_inform.append([[(random.uniform(-0.80, 0.45), random.uniform(-0.45, 0.08), random.uniform(0.30, 0.70)), # location for Airplane
-      (random.uniform(-0.80, 0.45), random.uniform(-0.45, 0.08), random.uniform(0.30, 0.70)), # location for Cheezit
-      (random.uniform(-0.80, 0.45), random.uniform(-0.45, 0.08), random.uniform(0.30, 0.70))], # location for Mustard
-     [(random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14)), # rotation for Airplane
-      (random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14)), # rotation for Cheezit
-      (random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14))]]) # rotation for Mustard
+                           (random.uniform(-0.80, 0.45), random.uniform(-0.45, 0.08), random.uniform(0.30, 0.70)), # location for Banana
+                           (random.uniform(-0.80, 0.45), random.uniform(-0.45, 0.08), random.uniform(0.30, 0.70)), # location for Cheezit
+                           (random.uniform(-0.80, 0.45), random.uniform(-0.45, 0.08), random.uniform(0.30, 0.70)), # location for Drill
+                           (random.uniform(-0.80, 0.45), random.uniform(-0.45, 0.08), random.uniform(0.30, 0.70))], # location for Mustard
+                          [(random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14)), # rotation for Airplane
+                           (random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14)), # rotation for Banana
+                           (random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14)), # rotation for Cheezit
+                           (random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14)), # rotation for Drill
+                           (random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14), random.uniform(-3.14, 3.14))]]) # rotation for Mustard
 
 
 scene_file = open(render_dir+"/scene_information.txt", 'w')
@@ -260,7 +264,7 @@ log_file.close()
 
 for scene_index in range(scene_num):
     
-    for j in range(3):
+    for j in range(5):
 
         model_list[j].location = scenes_inform[scene_index][0][j]
         model_list[j].rotation_euler = scenes_inform[scene_index][1][j]
@@ -288,7 +292,7 @@ for scene_index in range(scene_num):
                 log_file.write(str(datetime.datetime.now()))
                 log_file.write("\n")                
                 
-                renderScene(model_list, env_in_scene, str(scene_index), str(s_i), str(d_i), str(g_i))
+                renderAnimation(model_list, env_in_scene, str(scene_index), str(s_i), str(d_i), str(g_i))
                 
                 log_file.write(str(datetime.datetime.now()))
                 log_file.write("\n")
