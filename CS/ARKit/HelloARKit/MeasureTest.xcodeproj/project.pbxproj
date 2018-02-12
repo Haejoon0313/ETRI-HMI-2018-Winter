@@ -7,29 +7,35 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		501EA288202EE6C900095FBF /* VirtualObjectLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501EA287202EE6C900095FBF /* VirtualObjectLoader.swift */; };
+		506B2FB22023557A004CD6CD /* Chameleon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506B2FB12023557A004CD6CD /* Chameleon.swift */; };
 		50A962BE201F541700BF4685 /* TCPSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A962BD201F541700BF4685 /* TCPSocket.swift */; };
-		50A962C0201F553E00BF4685 /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A962BF201F553E00BF4685 /* Decoder.swift */; };
+		50A962C0201F553E00BF4685 /* Decoder+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A962BF201F553E00BF4685 /* Decoder+Capture.swift */; };
+		D71367D5202009CF00F98D87 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D71367D4202009CF00F98D87 /* Assets.xcassets */; };
 		D728DC3E201EA1E5005BCB3B /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D728DC3D201EA1E5005BCB3B /* Extension.swift */; };
 		D728DC50201EBA4E005BCB3B /* Object.swift in Sources */ = {isa = PBXBuildFile; fileRef = D728DC4F201EBA4E005BCB3B /* Object.swift */; };
+		D73BC12E202C0ABF00123F0C /* VirtualObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73BC12D202C0ABF00123F0C /* VirtualObject.swift */; };
 		D752065D2018591400E04636 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D752065C2018591400E04636 /* AppDelegate.swift */; };
 		D752065F2018591400E04636 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D752065E2018591400E04636 /* ViewController.swift */; };
 		D75206622018591400E04636 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D75206602018591400E04636 /* Main.storyboard */; };
-		D75206642018591400E04636 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D75206632018591400E04636 /* Assets.xcassets */; };
 		D75206672018591400E04636 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D75206652018591400E04636 /* LaunchScreen.storyboard */; };
 		D752066F20186BE700E04636 /* ViewController+ARSCNViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D752066E20186BE700E04636 /* ViewController+ARSCNViewDelegate.swift */; };
 		D752067520186EA800E04636 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = D752067420186EA800E04636 /* art.scnassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		501EA287202EE6C900095FBF /* VirtualObjectLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualObjectLoader.swift; sourceTree = "<group>"; };
+		506B2FB12023557A004CD6CD /* Chameleon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chameleon.swift; sourceTree = "<group>"; };
 		50A962BD201F541700BF4685 /* TCPSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPSocket.swift; sourceTree = "<group>"; };
-		50A962BF201F553E00BF4685 /* Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decoder.swift; sourceTree = "<group>"; };
+		50A962BF201F553E00BF4685 /* Decoder+Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Decoder+Capture.swift"; sourceTree = "<group>"; };
+		D71367D4202009CF00F98D87 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D728DC3D201EA1E5005BCB3B /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		D728DC4F201EBA4E005BCB3B /* Object.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Object.swift; sourceTree = "<group>"; };
+		D73BC12D202C0ABF00123F0C /* VirtualObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualObject.swift; sourceTree = "<group>"; };
 		D75206592018591400E04636 /* MeasureTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeasureTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D752065C2018591400E04636 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D752065E2018591400E04636 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D75206612018591400E04636 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		D75206632018591400E04636 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D75206662018591400E04636 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D75206682018591400E04636 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D752066E20186BE700E04636 /* ViewController+ARSCNViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+ARSCNViewDelegate.swift"; sourceTree = "<group>"; };
@@ -51,9 +57,20 @@
 			isa = PBXGroup;
 			children = (
 				50A962BD201F541700BF4685 /* TCPSocket.swift */,
-				50A962BF201F553E00BF4685 /* Decoder.swift */,
+				50A962BF201F553E00BF4685 /* Decoder+Capture.swift */,
 			);
 			path = TCPSocket;
+			sourceTree = "<group>";
+		};
+		D71367D3202009A600F98D87 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D752067420186EA800E04636 /* art.scnassets */,
+				D71367D4202009CF00F98D87 /* Assets.xcassets */,
+				D75206652018591400E04636 /* LaunchScreen.storyboard */,
+				D75206602018591400E04636 /* Main.storyboard */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		D75206502018591400E04636 = {
@@ -77,15 +94,15 @@
 			children = (
 				50A962C1201F559F00BF4685 /* TCPSocket */,
 				D752065C2018591400E04636 /* AppDelegate.swift */,
-				D728DC3D201EA1E5005BCB3B /* Extension.swift */,
-				D728DC4F201EBA4E005BCB3B /* Object.swift */,
 				D752065E2018591400E04636 /* ViewController.swift */,
 				D752066E20186BE700E04636 /* ViewController+ARSCNViewDelegate.swift */,
-				D75206602018591400E04636 /* Main.storyboard */,
-				D752067420186EA800E04636 /* art.scnassets */,
-				D75206632018591400E04636 /* Assets.xcassets */,
-				D75206652018591400E04636 /* LaunchScreen.storyboard */,
+				D728DC3D201EA1E5005BCB3B /* Extension.swift */,
+				D73BC12D202C0ABF00123F0C /* VirtualObject.swift */,
+				501EA287202EE6C900095FBF /* VirtualObjectLoader.swift */,
+				D728DC4F201EBA4E005BCB3B /* Object.swift */,
+				506B2FB12023557A004CD6CD /* Chameleon.swift */,
 				D75206682018591400E04636 /* Info.plist */,
+				D71367D3202009A600F98D87 /* Resources */,
 			);
 			path = MeasureTest;
 			sourceTree = "<group>";
@@ -151,7 +168,7 @@
 			files = (
 				D75206672018591400E04636 /* LaunchScreen.storyboard in Resources */,
 				D752067520186EA800E04636 /* art.scnassets in Resources */,
-				D75206642018591400E04636 /* Assets.xcassets in Resources */,
+				D71367D5202009CF00F98D87 /* Assets.xcassets in Resources */,
 				D75206622018591400E04636 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -167,8 +184,11 @@
 				D752066F20186BE700E04636 /* ViewController+ARSCNViewDelegate.swift in Sources */,
 				D752065F2018591400E04636 /* ViewController.swift in Sources */,
 				D752065D2018591400E04636 /* AppDelegate.swift in Sources */,
-				50A962C0201F553E00BF4685 /* Decoder.swift in Sources */,
+				50A962C0201F553E00BF4685 /* Decoder+Capture.swift in Sources */,
+				D73BC12E202C0ABF00123F0C /* VirtualObject.swift in Sources */,
 				50A962BE201F541700BF4685 /* TCPSocket.swift in Sources */,
+				501EA288202EE6C900095FBF /* VirtualObjectLoader.swift in Sources */,
+				506B2FB22023557A004CD6CD /* Chameleon.swift in Sources */,
 				D728DC3E201EA1E5005BCB3B /* Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

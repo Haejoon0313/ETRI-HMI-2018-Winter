@@ -8,9 +8,16 @@
 
 import Foundation
 
-enum Object {
-    case Cheezit
-    case Banana
-    case Dot
-    case Robot
+enum Object: String {
+    case Banana = "banana"
+    case Cheezit = "cheezeit"
+    case Robot = "robot"
+    case Mustard = "mustard"
+    case Drill = "drill"
+    case Soup = "soup"
+    case Dot = "dot"
+    case CrossMarker = "crossmarker"
+    case Chameleon = "chameleon"
+    case Nothing = "nothing"
 }
+

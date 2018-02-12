@@ -6,6 +6,18 @@
 //  Copyright © 2018년 GGOMMI. All rights reserved.
 //
 
+//1) MMS: 3Byte
+//2) NumbOfObj: 4Byte(UInt32)
+//-----------------------------
+//                  |3) ObjId: 1Byte(UInt8)
+//                  |4) RMat: 4Byte * 9 : 36Byte (Float)
+// numbOfObj   *    |5) Tvec: 4Byte * 3 : 12Byte (Float)
+//                  |6) Center_x: 4Byte (UInt32)
+//                  |7) Center_Y: 4Byte (UInt32)
+//                  |8) MME: 3Byte
+//-----------------------------
+//9) MME: 3Byte
+
 import Foundation
 
 typealias Byte = UInt8
@@ -54,7 +66,7 @@ class TCPSocket: NSObject, StreamDelegate {
      }
      */
     
-    func send(_ data: [Byte], _ length: Int) -> Bool {
+     func send(_ data: [Byte], _ length: Int) -> Bool {
         var cursor = data
         var bytesRemaining = length
         
